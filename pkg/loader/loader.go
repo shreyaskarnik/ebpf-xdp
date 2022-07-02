@@ -9,11 +9,15 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
+	"github.com/cilium/ebpf/rlimit"
 	"github.com/shreyaskarnik/ebpf-xdp/pkg/printer"
 )
 
 //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc $BPF_CLANG -cflags $BPF_CFLAGS bpf ../../ebpf/xdp.c -- -I../../ebpf/headers
 func SetupEBPF(ifaceName string) {
+	if err := rlimit.RemoveMemlock(); err != nil {
+		log.Fatal(err)
+	}
 	iface, err := net.InterfaceByName(ifaceName)
 	if err != nil {
 		log.Fatal(err)
