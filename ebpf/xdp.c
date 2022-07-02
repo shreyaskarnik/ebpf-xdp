@@ -1,19 +1,19 @@
 // +build ignore
 
+#include "vmlinux.h"
 #include "bpf_endian.h"
 #include "bpf_helpers.h"
-#include "vmlinux.h"
 
 char __license[] SEC("license") = "Dual MIT/GPL";
 
 #define MAX_MAP_ENTRIES 16
-#define ETH_P_IP 0x0800  // IPv4
+#define ETH_P_IP 0x0800 // IPv4
 /* Define an LRU hashmap for storing packet count by source IPv4 address */
 struct {
     __uint(type, BPF_MAP_TYPE_LRU_HASH);
     __uint(max_entries, MAX_MAP_ENTRIES);
-    __type(key, __u32);    // source IPv4 address
-    __type(value, __u32);  // packet count
+    __type(key, __u32);   // source IPv4 address
+    __type(value, __u32); // packet count
 } xdp_stats_map SEC(".maps");
 
 /*
