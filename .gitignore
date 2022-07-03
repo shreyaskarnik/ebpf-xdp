@@ -22,3 +22,9 @@ go.work
 bin/
 .vscode/*.log
 .vscode/*.properties.json
+# generated files
+*.o
+bpf_bpfeb*.go
+bpf_bpfel*.go
+ebpf/headers/*.h
+ebpf/headers/LICENSE*
