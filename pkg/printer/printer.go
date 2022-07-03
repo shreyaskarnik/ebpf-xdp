@@ -24,8 +24,8 @@ type data struct {
 
 type Model struct {
 	simpleTable table.Model
-	data        []*data
 	ebpfMap     *ebpf.Map
+	data        []*data
 }
 
 func NewModel(e *ebpf.Map) Model {
@@ -63,6 +63,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, tea.Quit)
 		}
 	case []*data:
+		// empty the data
 		m.simpleTable = m.simpleTable.WithRows(generateRows(msg))
 		cmds = append(cmds, func() tea.Msg {
 			time.Sleep(5 * time.Second)
@@ -104,7 +105,7 @@ func generateRows(d []*data) []table.Row {
 		rows = append(rows, table.NewRow(
 			table.RowData{
 				columnKeyIP:    d.IP,
-				columnKeyCount: fmt.Sprintf("%d", d.Count),
+				columnKeyCount: d.Count,
 			},
 		))
 	}

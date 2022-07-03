@@ -48,9 +48,6 @@ static __always_inline int parse_ip_src_addr(struct xdp_md *ctx,
 
 SEC("xdp")
 int xdp_prog_func(struct xdp_md *ctx) {
-    const char fmt_str_port_check[] = "Got request on port %d and it is %d!\n";
-    bpf_trace_printk(fmt_str_port_check, sizeof(fmt_str_port_check), ctx->data,
-                     ctx->data_meta);
     __u32 ip;
     if (!parse_ip_src_addr(ctx, &ip)) {
         goto done;
