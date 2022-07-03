@@ -7,8 +7,9 @@
 char __license[] SEC("license") = "Dual MIT/GPL";
 
 #define MAX_MAP_ENTRIES 16
-#define ETH_P_IP 0x0800 // IPv4
-/* Define an LRU hashmap for storing packet count by source IPv4 address */
+#define ETH_P_IPV4 0x0800 // IPv4
+#define ETH_P_IPV6 0x86DD // IPv6
+/* Define an LRU hashmap for storing packet count by source IP address */
 struct {
     __uint(type, BPF_MAP_TYPE_LRU_HASH);
     __uint(max_entries, MAX_MAP_ENTRIES);
@@ -17,8 +18,8 @@ struct {
 } xdp_stats_map SEC(".maps");
 
 /*
-Attempt to parse the IPv4 source address from the packet.
-If the packet is not IPv4, return 0.
+Attempt to parse the IPv4 or IPv6 source address from the packet.
+If the packet is neither IPv4 nor IPv6, return 0.
 */
 static __always_inline int parse_ip_src_addr(struct xdp_md *ctx,
                                              __u32 *ip_src_addr) {
@@ -31,19 +32,26 @@ static __always_inline int parse_ip_src_addr(struct xdp_md *ctx,
         return 0;
     }
 
-    if (eth->h_proto != bpf_htons(ETH_P_IP)) {
-        // Not IPv4
+    if (eth->h_proto != bpf_htons(ETH_P_IPV4) &&
+        eth->h_proto != bpf_htons(ETH_P_IPV6)) {
+        // Not IPv4 or IPv6
         return 0;
     }
+    if (eth->h_proto == bpf_htons(ETH_P_IPV4)) {
+        struct iphdr *ip = (void *)(eth + 1);
+        if ((void *)(ip + 1) > data_end) {
+            return 0;
+        }
 
-    struct iphdr *ip = (void *)(eth + 1);
-    if ((void *)(ip + 1) > data_end) {
+        // return the source IPv4 address in network byte order
+        *ip_src_addr = (__u32)(ip->saddr);
+        return 1;
+    }
+    if (eth->h_proto == bpf_htons(ETH_P_IPV6)) {
+        // TODO: implement IPv6
         return 0;
     }
-
-    // return the source IPv4 address in network byte order
-    *ip_src_addr = (__u32)(ip->saddr);
-    return 1;
+    return 0;
 }
 
 SEC("xdp")

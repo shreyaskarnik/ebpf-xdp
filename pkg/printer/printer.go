@@ -32,7 +32,7 @@ func NewModel(e *ebpf.Map) Model {
 	return Model{
 		simpleTable: table.New(
 			[]table.Column{
-				table.NewColumn(columnKeyIP, "IPv4 Address", 45),
+				table.NewColumn(columnKeyIP, "IP Address", 45),
 				table.NewColumn(columnKeyCount, "Count", 10),
 			},
 		).BorderRounded().
