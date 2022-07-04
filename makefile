@@ -23,5 +23,9 @@ build: mod generate
 	GOARCH=amd64 GOOS=linux go build -o ./bin/ebpf-xdp main.go
 	GOARCH=arm64 GOOS=linux go build -o ./bin/ebpf-xdp-arm64 main.go
 
-docker-run: vmlinux
-	docker run -ti --rm -v ```pwd```:/code -w /code quay.io/cilium/ebpf-builder:1648566014
+docker-build:
+	@echo "Building Docker image..."
+	docker build -t ebpf-xdp .
+
+docker-run: docker-build
+	docker run -ti --rm -v ```pwd```:/code -w /code --privileged ebpf-xdp
