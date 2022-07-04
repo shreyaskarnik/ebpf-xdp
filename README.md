@@ -5,6 +5,8 @@ Here [eBPF](https://ebpf.io/) is used to write a program in kernel space using [
 
 * Since XDP is the earliest point where the packets can be intercepted it was very interesting to experiment with and learn.
 
+* All sorts of interesting things such as filtering and re-shaping plus introspection into the packet data can be performed using XDP.
+
 * Used Golang to write the userspace program to display the IP address with the count of packets.
 
 * Used [Cilium eBPF](https://github.com/cilium/ebpf) to write the userspace Go code. There is a very handy tool [bpf2go](github.com/cilium/ebpf/cmd/bpf2go) which can be used to generate the Go code from the eBPF code.
