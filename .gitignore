@@ -28,3 +28,4 @@ bpf_bpfeb*.go
 bpf_bpfel*.go
 ebpf/headers/*.h
 ebpf/headers/LICENSE*
+.vscode/*.log
