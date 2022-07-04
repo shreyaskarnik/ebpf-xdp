@@ -40,6 +40,8 @@ Example Output:
 
 XDP Kernel program can be found [here](./ebpf/xdp.c)
 
+The header files for the XDP kernel program are generated and downloaded by [update.sh](./ebpf/headers/update.sh) and [vmlinux.sh](./ebpf/headers/vmlinux.sh)
+
 ## TODOs
 
 * Add support for IPv6 addresses
