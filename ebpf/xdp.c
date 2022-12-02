@@ -53,8 +53,9 @@ static __always_inline int parse_ip_src_addr(struct xdp_md *ctx,
             return 0;
         }
 
-        // return the source IPv6 address
-        *ip_src_addr = (__u32)(ip6h->saddr);
+        // convert the source IPv6 address to network byte order
+        __u64 ip6_src_addr = bpf_htonll(ip6h->saddr);
+        *ip_src_addr = (__u32)(ip6_src_addr);
         return 1;
     }
     return 0;
