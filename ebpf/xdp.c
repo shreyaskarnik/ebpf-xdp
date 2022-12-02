@@ -48,8 +48,14 @@ static __always_inline int parse_ip_src_addr(struct xdp_md *ctx,
         return 1;
     }
     if (eth->h_proto == bpf_htons(ETH_P_IPV6)) {
-        // TODO: implement IPv6
-        return 0;
+        struct ipv6hdr *ip6h = (void *)(eth + 1);
+        if ((void *)(ip6h + 1) > data_end) {
+            return 0;
+        }
+
+        // return the source IPv6 address
+        *ip_src_addr = (__u32)(ip6h->saddr);
+        return 1;
     }
     return 0;
 }
